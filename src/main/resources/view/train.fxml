@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TrainController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="Search Trains">
+         <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+    
+    <VBox spacing="10" alignment="CENTER">
+        <HBox spacing="10" alignment="CENTER">
+            <TextField fx:id="sourceField" promptText="Source (e.g., Mumbai)" />
+            <TextField fx:id="destinationField" promptText="Destination (e.g., Delhi)" />
+        </HBox>
+        <HBox spacing="10" alignment="CENTER">
+            <DatePicker fx:id="datePicker" promptText="Travel Date" />
+            <Button text="Search" onAction="#handleSearch" />
+        </HBox>
+    </VBox>
+
+    <TableView fx:id="trainTable" maxWidth="600" visible="true" managed="true">
+        <columns>
+            <TableColumn fx:id="trainIdColumn" text="Train ID" />
+            <TableColumn fx:id="trainNameColumn" text="Train Name" />
+            <TableColumn fx:id="sourceColumn" text="Source" />
+            <TableColumn fx:id="destColumn" text="Destination" />
+            <TableColumn fx:id="seatsColumn" text="Available Seats" />
+        </columns>
+    </TableView>
+    
+    <Button fx:id="selectButton" text="Select Train &amp; Book Seats" onAction="#handleSelectTrain" visible="true" managed="true" />
+    <Label fx:id="errorLabel" textFill="RED" />
+</VBox>
