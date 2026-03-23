@@ -1,0 +1,32 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - echo "Installing frontend dependencies..."
+      - npm install
+  
+  pre_build:
+    commands:
+      - echo "Checking environment..."
+      - java -version
+      - mvn -version
+
+  build:
+    commands:
+      - echo "Building React app..."
+      - npm run build
+      - echo "Compiling Java Backend..."
+      - mvn clean package -DskipTests
+
+  post_build:
+    commands:
+      - echo "Build completed successfully on `date`"
+
+artifacts:
+  files:
+    - 'target/*.jar'
+    - 'build/**/*'
+    - 'appspec.yml'
+    - 'scripts/**/*'
+  discard-paths: no
