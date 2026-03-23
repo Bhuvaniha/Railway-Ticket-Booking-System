@@ -1,32 +1,44 @@
 version: 0.1
+component: build
+timeoutInSeconds: 600
+shell: bash
+
+env:
+  variables:
+    NODE_ENV: "production"
 
 phases:
   install:
-    commands:
-      - echo "Installing frontend dependencies..."
-      - npm install
-  
-  pre_build:
-    commands:
-      - echo "Checking environment..."
-      - java -version
-      - mvn -version
+    steps:
+      - type: Command
+        name: "Install Dependencies"
+        command: |
+          echo "Installing frontend dependencies..."
+          npm install
+          echo "Verifying Java/Maven environment..."
+          mvn -version
 
   build:
-    commands:
-      - echo "Building React app..."
-      - npm run build
-      - echo "Compiling Java Backend..."
-      - mvn clean package -DskipTests
+    steps:
+      - type: Command
+        name: "Build React Frontend"
+        command: |
+          npm run build
+
+      - type: Command
+        name: "Build Java Backend"
+        command: |
+          # Compiles code and creates the JAR file in /target
+          mvn clean package -DskipTests
 
   post_build:
-    commands:
-      - echo "Build completed successfully on `date`"
+    steps:
+      - type: Command
+        name: "Build Cleanup"
+        command: |
+          echo "Build completed successfully on `date`"
 
-artifacts:
-  files:
-    - 'target/*.jar'
-    - 'build/**/*'
-    - 'appspec.yml'
-    - 'scripts/**/*'
-  discard-paths: no
+outputArtifacts:
+  - name: java_app_binary
+    type: BINARY
+    location: target/*.jar
