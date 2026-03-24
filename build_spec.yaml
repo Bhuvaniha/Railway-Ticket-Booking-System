@@ -8,35 +8,69 @@ env:
     NODE_ENV: "production"
 
 steps:
+  # 🔍 Debug environment (VERY useful)
+  - type: Command
+    name: "Debug Info"
+    command: |
+      echo "Current directory:"
+      pwd
+      echo "Listing files:"
+      ls -la
+
+  # ⚙️ Install required tools
+  - type: Command
+    name: "Install Node.js and Maven"
+    command: |
+      echo "Installing Node.js and Maven..."
+      sudo yum install -y nodejs npm maven || yum install -y nodejs npm maven
+
+  # 🔍 Verify installations
+  - type: Command
+    name: "Verify Tools"
+    command: |
+      echo "Node version:"
+      node -v || echo "Node not found"
+      echo "NPM version:"
+      npm -v || echo "NPM not found"
+      echo "Maven version:"
+      mvn -version || echo "Maven not found"
+
+  # 📦 Install frontend dependencies
   - type: Command
     name: "Install Frontend Dependencies"
     command: |
       echo "Installing frontend dependencies..."
+      if [ -d "frontend" ]; then
+        cd frontend
+      fi
       npm install
 
-  - type: Command
-    name: "Verify Java/Maven Environment"
-    command: |
-      echo "Verifying Java/Maven environment..."
-      mvn -version
-
+  # ⚛️ Build React frontend
   - type: Command
     name: "Build React Frontend"
     command: |
+      if [ -d "frontend" ]; then
+        cd frontend
+      fi
       npm run build
 
+  # ☕ Build Java backend
   - type: Command
     name: "Build Java Backend"
     command: |
       echo "Building Java backend..."
+      if [ -d "backend" ]; then
+        cd backend
+      fi
       mvn clean package -DskipTests
 
+  # ✅ Final message
   - type: Command
-    name: "Build Cleanup"
+    name: "Build Complete"
     command: |
       echo "Build completed successfully on $(date)"
 
 outputArtifacts:
   - name: java_app_binary
     type: BINARY
-    location: target/*.jar
+    location: backend/target/*.jar
