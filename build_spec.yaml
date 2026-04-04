@@ -1,39 +1,20 @@
 version: 0.1
 component: build
-timeoutInSeconds: 900
+timeoutInSeconds: 600
 
 shell: bash
 
 steps:
   - type: Command
-    name: "Install Java, Maven, Node.js"
+    name: "Install Java & Maven"
     command: |
-      echo "Updating packages..."
       yum update -y
+      yum install -y java-17-openjdk maven
 
-      echo "Installing Java..."
-      yum install -y java-17-openjdk
-
-      echo "Installing Maven..."
-      yum install -y maven
-
-      echo "Installing Node.js..."
-      curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
-      yum install -y nodejs
-
-      echo "Check versions"
       java -version
       mvn -version
-      node -v
-      npm -v
 
   - type: Command
-    name: "Build Backend (Maven)"
+    name: "Build Project"
     command: |
       mvn clean install
-
-  - type: Command
-    name: "Build Frontend (Node)"
-    command: |
-      npm install
-      npm run build
