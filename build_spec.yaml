@@ -1,76 +1,39 @@
 version: 0.1
 component: build
-timeoutInSeconds: 600
+timeoutInSeconds: 900
+
 shell: bash
 
-env:
-  variables:
-    NODE_ENV: "production"
-
 steps:
-  # 🔍 Debug environment (VERY useful)
   - type: Command
-    name: "Debug Info"
+    name: "Install Java, Maven, Node.js"
     command: |
-      echo "Current directory:"
-      pwd
-      echo "Listing files:"
-      ls -la
+      echo "Updating packages..."
+      yum update -y
 
-  # ⚙️ Install required tools
-  - type: Command
-    name: "Install Node.js and Maven"
-    command: |
-      echo "Installing Node.js and Maven..."
-      sudo yum install -y nodejs npm maven || yum install -y nodejs npm maven
+      echo "Installing Java..."
+      yum install -y java-17-openjdk
 
-  # 🔍 Verify installations
-  - type: Command
-    name: "Verify Tools"
-    command: |
-      echo "Node version:"
-      node -v || echo "Node not found"
-      echo "NPM version:"
-      npm -v || echo "NPM not found"
-      echo "Maven version:"
-      mvn -version || echo "Maven not found"
+      echo "Installing Maven..."
+      yum install -y maven
 
-  # 📦 Install frontend dependencies
+      echo "Installing Node.js..."
+      curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+      yum install -y nodejs
+
+      echo "Check versions"
+      java -version
+      mvn -version
+      node -v
+      npm -v
+
   - type: Command
-    name: "Install Frontend Dependencies"
+    name: "Build Backend (Maven)"
     command: |
-      echo "Installing frontend dependencies..."
-      if [ -d "frontend" ]; then
-        cd frontend
-      fi
+      mvn clean install
+
+  - type: Command
+    name: "Build Frontend (Node)"
+    command: |
       npm install
-
-  # ⚛️ Build React frontend
-  - type: Command
-    name: "Build React Frontend"
-    command: |
-      if [ -d "frontend" ]; then
-        cd frontend
-      fi
       npm run build
-
-  # ☕ Build Java backend
-  - type: Command
-    name: "Build Java Backend"
-    command: |
-      echo "Building Java backend..."
-      if [ -d "backend" ]; then
-        cd backend
-      fi
-      mvn clean package -DskipTests
-
-  # ✅ Final message
-  - type: Command
-    name: "Build Complete"
-    command: |
-      echo "Build completed successfully on $(date)"
-
-outputArtifacts:
-  - name: java_app_binary
-    type: BINARY
-    location: backend/target/*.jar
